@@ -1,0 +1,21 @@
+name = "pilot"
+title = "干诺道西及西天桥 · 检测点级提前 30 分钟平均车速预测"
+status = "原型实测：三天档案"
+input = "data/raw/pilot/lane_observations.csv.gz"
+detectors = "data/reference/detectors.csv"
+manifest = "data/provenance/pilot_archive_manifest.json"
+extraction_audit = "data/provenance/pilot_extraction_audit.json"
+output = "results/pilot"
+start = "2026-10-16"
+test_start = "2026-10-18"
+end_exclusive = "2026-10-19"
+# 同一检测点目标箱的均速；流量与占用率是输入。 / Target: mean speed at one detector. Flow and occupancy are inputs.
+bin_minutes = 5
+horizon_minutes = 30
+# 车道数用于覆盖率。原型中车道速度差的收益小且不稳定，主模型预测点位均速。
+# Lane count determines coverage. Small and inconsistent pilot gains kept lane-gap inputs out of the primary detector model.
+min_coverage = 0.60
+seed = 42
+ridge_alphas = [10.0]
+forest_leaf_sizes = [25]
+forest_trees = 100

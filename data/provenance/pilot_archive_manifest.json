@@ -1,0 +1,29 @@
+[
+  {
+    "day": "20261016",
+    "source_url": "https://resource.data.one.gov.hk/td/traffic-detectors/rawSpeedVol-all.xml",
+    "retrieval_url": "https://app.data.gov.hk/v1/historical-archive/get-file?url=https%3A%2F%2Fresource.data.one.gov.hk%2Ftd%2Ftraffic-detectors%2FrawSpeedVol-all.xml&time=20261016",
+    "resolved_url": "https://historical-resource-archive-daily.oss-cn-hongkong.aliyuncs.com/7c383a978e42cfa2953886913b189fbb1e4bad34bf5d9b92598cc4e1aea8a25d/data/2026/10/7c383a978e42cfa2953886913b189fbb1e4bad34bf5d9b92598cc4e1aea8a25d-20261016.zip",
+    "size_bytes": 37568176,
+    "sha256": "a872a7e2de559e9bcd45281dcd36d353b8c0992eabe0d1daf6b92d39f08d3e3c",
+    "version_count": 1035
+  },
+  {
+    "day": "20261017",
+    "source_url": "https://resource.data.one.gov.hk/td/traffic-detectors/rawSpeedVol-all.xml",
+    "retrieval_url": "https://app.data.gov.hk/v1/historical-archive/get-file?url=https%3A%2F%2Fresource.data.one.gov.hk%2Ftd%2Ftraffic-detectors%2FrawSpeedVol-all.xml&time=20261017",
+    "resolved_url": "https://historical-resource-archive-daily.oss-cn-hongkong.aliyuncs.com/7c383a978e42cfa2953886913b189fbb1e4bad34bf5d9b92598cc4e1aea8a25d/data/2026/10/7c383a978e42cfa2953886913b189fbb1e4bad34bf5d9b92598cc4e1aea8a25d-20261017.zip",
+    "size_bytes": 38505886,
+    "sha256": "d072fa8a3511d7e70fb9413046aa421e68a3e1971aeb00e7bc4409492cd1294e",
+    "version_count": 1053
+  },
+  {
+    "day": "20261018",
+    "source_url": "https://resource.data.one.gov.hk/td/traffic-detectors/rawSpeedVol-all.xml",
+    "retrieval_url": "https://app.data.gov.hk/v1/historical-archive/get-file?url=https%3A%2F%2Fresource.data.one.gov.hk%2Ftd%2Ftraffic-detectors%2FrawSpeedVol-all.xml&time=20261018",
+    "resolved_url": "https://historical-resource-archive-daily.oss-cn-hongkong.aliyuncs.com/7c383a978e42cfa2953886913b189fbb1e4bad34bf5d9b92598cc4e1aea8a25d/data/2026/10/7c383a978e42cfa2953886913b189fbb1e4bad34bf5d9b92598cc4e1aea8a25d-20261018.zip",
+    "size_bytes": 36925051,
+    "sha256": "7cde2dc85e1a10f84207b1427b390f4fbe0fcaaa1c5a4314f2466e4ccc017b33",
+    "version_count": 1061
+  }
+]

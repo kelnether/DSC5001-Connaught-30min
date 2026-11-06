@@ -1,0 +1,130 @@
+{
+  "configuration": {
+    "name": "pilot",
+    "title": "干诺道西及西天桥 · 检测点级提前 30 分钟平均车速预测",
+    "status": "原型实测：三天档案",
+    "input": "data/raw/pilot/lane_observations.csv.gz",
+    "detectors": "data/reference/detectors.csv",
+    "manifest": "data/provenance/pilot_archive_manifest.json",
+    "extraction_audit": "data/provenance/pilot_extraction_audit.json",
+    "output": "results/pilot",
+    "start": "2026-10-16",
+    "test_start": "2026-10-18",
+    "end_exclusive": "2026-10-19",
+    "bin_minutes": 5,
+    "horizon_minutes": 30,
+    "min_coverage": 0.6,
+    "seed": 42,
+    "ridge_alphas": [
+      10.0
+    ],
+    "forest_leaf_sizes": [
+      25
+    ],
+    "forest_trees": 100
+  },
+  "forecast_target": {
+    "column": "target_speed",
+    "unit": "km/h",
+    "spatial_unit": "detector_id",
+    "aggregation": "vehicle-count-weighted mean of valid lane observations within one detector",
+    "window_minutes": 5,
+    "horizon_minutes": 30,
+    "additional_predictors": {
+      "flow_per_lane_hour": "vehicles per lane per hour",
+      "occupancy": "%"
+    }
+  },
+  "lane_decision": {
+    "primary_unit": "detector",
+    "lane_count_role": "coverage and subgroup checks",
+    "lane_speed_role": "vehicle-weighted detector mean and exploratory speed-gap trial",
+    "decision_reason": "Small matched-row gains and worse all-row MAE on both pilot holdouts.",
+    "pilot_mae_unit": "km/h",
+    "pilot_comparisons": [
+      {
+        "date": "2026-10-17",
+        "comparison": "static_count",
+        "n": 2543,
+        "baseline_mae": 5.16383,
+        "trial_mae": 5.15773
+      },
+      {
+        "date": "2026-10-18",
+        "comparison": "static_count",
+        "n": 2454,
+        "baseline_mae": 3.06419,
+        "trial_mae": 3.06286
+      },
+      {
+        "date": "2026-10-17",
+        "comparison": "gap_matched",
+        "n": 2225,
+        "baseline_mae": 5.95768,
+        "trial_mae": 5.94204
+      },
+      {
+        "date": "2026-10-18",
+        "comparison": "gap_matched",
+        "n": 2136,
+        "baseline_mae": 2.92387,
+        "trial_mae": 2.92283
+      },
+      {
+        "date": "2026-10-17",
+        "comparison": "gap_all_rows",
+        "n": 2543,
+        "baseline_mae": 5.16383,
+        "trial_mae": 5.22271
+      },
+      {
+        "date": "2026-10-18",
+        "comparison": "gap_all_rows",
+        "n": 2454,
+        "baseline_mae": 3.06419,
+        "trial_mae": 3.06707
+      }
+    ]
+  },
+  "data": {
+    "input_rows": 181455,
+    "missing_timestamps": 0,
+    "out_of_window_or_invalid_time": 116,
+    "duplicate_rows": 0,
+    "invalid_or_offline_rows": 24328,
+    "valid_lane_rows": 157011,
+    "registered_detectors": 12,
+    "detectors_with_rows": 12,
+    "usable_detectors": 11,
+    "grid_rows": 10368,
+    "usable_bins": 9003,
+    "sha256": "2ff3a09e48370438a3a12773a302828df92ad98fae1b9055a34a6b9502dbd31e"
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "sklearn": "1.9.1"
+  },
+  "split": {
+    "train_n": 5083,
+    "test_n": 2454,
+    "last_train_target": "2026-10-18 00:00:00",
+    "first_test_origin": "2026-10-18 00:00:00",
+    "last_test_target": "2026-10-18 23:50:00",
+    "test_days": 1,
+    "test_detectors": 11
+  },
+  "selected_parameters": {
+    "ridge_full": 10.0,
+    "ridge_speed_only": 10.0,
+    "random_forest": 25
+  },
+  "historical_levels": {
+    "point_daytype_hour": 2454
+  },
+  "ablation": {
+    "full_mae_improvement_kmh": 0.1146057780471474,
+    "test_days": 1,
+    "paired_daily_bootstrap_95pct": null
+  }
+}

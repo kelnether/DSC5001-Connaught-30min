@@ -1,0 +1,14 @@
+{
+  "input_rows": 181455,
+  "missing_timestamps": 0,
+  "out_of_window_or_invalid_time": 116,
+  "duplicate_rows": 0,
+  "invalid_or_offline_rows": 24328,
+  "valid_lane_rows": 157011,
+  "registered_detectors": 12,
+  "detectors_with_rows": 12,
+  "usable_detectors": 11,
+  "grid_rows": 10368,
+  "usable_bins": 9003,
+  "sha256": "2ff3a09e48370438a3a12773a302828df92ad98fae1b9055a34a6b9502dbd31e"
+}

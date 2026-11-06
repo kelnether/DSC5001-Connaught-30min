@@ -1,0 +1,13 @@
+detector_id,road_group,road_name_en,road_name_zh,latitude,longitude,catalog_compass,district
+AID03101,Flyover,Connaught Road West Flyover near Tram Depot - Eastbound,干诺道西天桥近电车厂 - 东行,22.287996,114.1379233,North East,Central & Western
+AID03102,Surface,Connaught Road West near Western Wholesale Food Market - Northbound,干诺道西近西区副食品批发市场 - 北行,22.2887006,114.1388353,North East,Central & Western
+AID03103,Surface,Connaught Road West near Sun Yat Sen Memorial Park - Northbound (1),干诺道西近中山纪念公园 - 北行 (1),22.28851255,114.1463558,West,Central & Western
+AID03104,Surface,Connaught Road West near Sun Yat Sen Memorial Park - Northbound (2),干诺道西近中山纪念公园 - 北行 (2),22.28869255,114.1432602,West,Central & Western
+AID04102,Flyover,Connaught Road West Flyover near Western Harbour Centre - Eastbound,干诺道西天桥近汇港中心 - 东行,22.28749888,114.1361379,North East,Central & Western
+AID04103,Flyover,Connaught Road West Flyover near The Westpoint - Eastbound,干诺道西天桥近西港中心 - 东行,22.28899887,114.1399608,North East,Central & Western
+AID04104,Flyover,Connaught Road West Flyover near Sun Yat Sen Memorial Park - Eastbound,干诺道西天桥近中山纪念公园 - 东行,22.2890808,114.1429302,East,Central & Western
+AID04105,Flyover,Connaught Road West Flyover near Central Police Station - Eastbound,干诺道西天桥近中区警署 - 东行,22.28822405,114.1490826,West,Central & Western
+AID04218,Flyover,Connaught Road West Flyover near Shun Tak Centre - Westbound,干诺道西天桥近信德中心 - 西行,22.2875291,114.1515281,West,Central & Western
+AID04219,Flyover,Connaught Road West Flyover near Sheung Wan Fire Station - Westbound,干诺道西天桥近上环消防局 - 西行,22.28842253,114.1479666,West,Central & Western
+AID04220,Flyover,Connaught Road West Flyover near Sun Yat Sen Memorial Park - Westbound,干诺道西天桥近中山纪念公园 - 西行,22.28889136,114.1439589,West,Central & Western
+AID04221,Flyover,Connaught Road West Flyover near Courtyard - Westbound,干诺道西天桥近万怡酒店 - 西行,22.28817674,114.1384473,West,Central & Western

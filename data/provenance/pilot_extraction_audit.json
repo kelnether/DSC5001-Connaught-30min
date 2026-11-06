@@ -1,0 +1,20 @@
+[
+  {
+    "day": "20261016",
+    "snapshots": 1035,
+    "periods": 2070,
+    "selected_lane_rows": 59036
+  },
+  {
+    "day": "20261017",
+    "snapshots": 1053,
+    "periods": 2106,
+    "selected_lane_rows": 61005
+  },
+  {
+    "day": "20261018",
+    "snapshots": 1061,
+    "periods": 2122,
+    "selected_lane_rows": 61414
+  }
+]
