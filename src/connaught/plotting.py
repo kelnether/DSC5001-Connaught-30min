@@ -1,4 +1,4 @@
-"""原型 EDA 与预测诊断绘图。 / EDA and forecast diagnostics."""
+"""EDA and forecast diagnostics. / 原型 EDA 与预测诊断绘图。"""
 
 import logging
 
@@ -13,12 +13,12 @@ def _save_figure(plt, fig, folder, name):
     path = folder / f"{name}.png"
     fig.savefig(path, dpi=145, bbox_inches="tight", facecolor="white")
     plt.close(fig)
-    logger.info("已保存图表：%s", path)
+    logger.info("Saved figure to %s. / 已保存图表。", path)
     return path
 
 
 def save_eda_figures(panel, output):
-    """生成覆盖率与小时车速图。 / Render coverage and hourly speed profiles."""
+    """Render coverage and hourly speed profiles. / 生成覆盖率与小时车速图。"""
     from matplotlib import use
     use("Agg")
     from matplotlib import pyplot as plt
@@ -53,7 +53,7 @@ def save_eda_figures(panel, output):
 
 
 def save_forecast_figures(pred, scores, output, config):
-    """生成模型误差与预测示例图。 / Render model errors and an example forecast."""
+    """Render model errors and an example forecast. / 生成模型误差与预测示例图。"""
     from matplotlib import use
     use("Agg")
     from matplotlib import pyplot as plt

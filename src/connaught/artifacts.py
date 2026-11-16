@@ -1,4 +1,4 @@
-"""JSON 输出与来源校验。 / JSON output and provenance checks."""
+"""JSON output and provenance checks. / JSON 输出与来源校验。"""
 
 import hashlib
 import json

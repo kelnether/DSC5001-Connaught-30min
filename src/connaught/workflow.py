@@ -1,4 +1,4 @@
-"""兼容原有 workflow 导入。 / Preserve the original workflow import surface."""
+"""Preserve the original workflow import surface. / 兼容原有 workflow 导入。"""
 
 from .archives import (
     ARCHIVE_API, DATA_COLUMNS, SOURCE_XML, archive_dates, archive_members, archive_url,

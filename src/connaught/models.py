@@ -1,4 +1,4 @@
-"""基线、Ridge、随机森林和时序选参。 / Benchmarks, Ridge, random forest and chronological tuning."""
+"""Benchmarks, Ridge, random forest and chronological tuning. / 基线、Ridge、随机森林和时序选参。"""
 
 import logging
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def historical_baseline(train, test):
-    """仅用训练数据计算典型车速，并记录分层回退规则。 / Training-only typical speed, with a documented backoff hierarchy."""
+    """Training-only typical speed, with a documented backoff hierarchy. / 仅用训练数据计算典型车速，并记录分层回退规则。"""
     prediction = np.full(len(test), np.nan)
     levels = np.full(len(test), "", dtype=object)
     hierarchy = [
@@ -57,13 +57,13 @@ def choose_parameters(examples, config):
     ]
     folds = [split_at(examples, f["start"], f["end"]) for f in config.get("validation", [])]
     if folds:
-        logger.info("使用 %d 折时序验证按 MAE 选参。", len(folds))
+        logger.info("Selecting parameters by MAE across %d chronological folds. / 按时序验证的 MAE 选参。", len(folds))
     else:
-        logger.info("使用原型配置的固定参数。")
+        logger.info("Using the fixed pilot parameters. / 使用原型配置的固定参数。")
     rows, selected = [], {}
     for label, family, candidates, features in families:
         if not folds and len(candidates) > 1:
-            raise ValueError(f"{label}: multiple hyperparameters require validation folds.")
+            raise ValueError(f"{label}: multiple candidates require validation folds. / 比较多个参数值需要配置验证折。")
         means = []
         for value in candidates:
             fold_scores = []
@@ -84,11 +84,11 @@ def predict_all(train, test, specs, config):
                  "target_weekend", "time_group", "speed", "target_speed"]].copy()
     pred["persistence"] = test["speed"]
     pred["historical"], pred["historical_level"] = historical_baseline(train, test)
-    logger.info("已为 %s 条测试样本生成 Persistence 和历史中位数基线预测。", f"{len(test):,}")
+    logger.info("Generated persistence and historical median forecasts for %s test rows. / 已生成两种基线预测。", f"{len(test):,}")
     coefficients = pd.DataFrame()
     for label, (family, value, features) in specs.items():
         parameter = "alpha" if family == "ridge" else "min_samples_leaf"
-        logger.info("拟合 %s：%s=%s，%d 项数值或二元特征，另含点位编码。",
+        logger.info("Fitting %s with %s=%s, %d numeric or binary features and detector encoding. / 正在拟合模型，含点位编码。",
                     label, parameter, value, len(features))
         model = build_model(family, value, features, config)
         cols = features + ["detector_id"]

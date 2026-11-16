@@ -1,4 +1,4 @@
-"""官方归档查询、下载及车道 XML 提取。 / Discover, download and extract official lane archives."""
+"""Discover, download and extract official lane archives. / 官方归档查询、下载及车道 XML 提取。"""
 
 from concurrent.futures import ThreadPoolExecutor
 import csv
@@ -42,10 +42,11 @@ def fetch_archive_resource(url, destination=None):
     if destination:
         args += ["--output", str(destination), "--write-out", "%{url_effective}"]
     if not shutil.which("curl"):
-        raise RuntimeError("Online archive retrieval requires curl on PATH.")
+        raise RuntimeError("Online archive retrieval requires curl on PATH. / 在线获取归档需要 curl。")
     result = subprocess.run([*args, url], capture_output=True, check=False)
     if result.returncode:
-        raise RuntimeError(result.stderr.decode("utf-8", errors="replace").strip())
+        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        raise RuntimeError(f"Archive request failed. / 归档请求失败。 {detail}")
     return result.stdout
 
 
@@ -54,9 +55,9 @@ def fetch_json(url):
 
 
 def probe_archives(config):
-    """核对逐日快照数量及官方 ZIP 归档方式。 / Check daily snapshot counts and the available official ZIP packaging."""
+    """Check daily snapshot counts and the available official ZIP packaging. / 核对逐日快照数量及官方 ZIP 归档方式。"""
     days = archive_dates(config)
-    logger.info("向官方档案 API 查询 %d 天的快照和 ZIP 元数据。", len(days))
+    logger.info("Querying official snapshot and ZIP metadata for %d days. / 查询官方快照与 ZIP 元数据。", len(days))
 
     def one_day(day):
         try:
@@ -81,14 +82,14 @@ def archive_members(archive, day_prefix=None):
 
 
 def download_archives(config, archive_dir, probe=None):
-    """每个官方日档或月档只下载一次并复用。 / Download each advertised daily or monthly ZIP once and reuse it."""
+    """Download each advertised daily or monthly ZIP once and reuse it. / 每个官方日档或月档只下载一次并复用。"""
     archive_dir.mkdir(parents=True, exist_ok=True)
     rows = probe if probe is not None else probe_archives(config)
     if [r["day"] for r in rows] != archive_dates(config):
-        raise ValueError("Archive probe does not match configuration dates.")
+        raise ValueError("Archive probe dates differ from configured dates. / 归档查询日期与配置不符。")
     missing = [r["day"] for r in rows if not r.get("official_package") or not r.get("snapshot_versions")]
     if missing:
-        raise ValueError(f"Missing advertised archives for {missing}. Review the probe before downloading.")
+        raise ValueError(f"Missing advertised archives for {missing}. Check the probe before downloading. / 部分日期缺少归档，下载前请核对查询结果。")
     verified = {}
     manifest = []
     for row in rows:
@@ -101,29 +102,29 @@ def download_archives(config, archive_dir, probe=None):
             resolved = None
             advertised = int(bundle["size"])
             if not path.is_file():
-                logger.info("开始下载 %s（%s 字节）。", path.name, f"{advertised:,}")
+                logger.info("Downloading %s (%s bytes). / 正在下载归档。", path.name, f"{advertised:,}")
                 temp = path.with_suffix(".part")
                 try:
                     resolved = fetch_archive_resource(url, temp).decode("utf-8")
                     if temp.stat().st_size != advertised or not zipfile.is_zipfile(temp):
-                        raise ValueError(f"{path.name}: response does not match advertised ZIP.")
+                        raise ValueError(f"{path.name}: response differs from advertised ZIP. / 下载文件与官方公布的 ZIP 不符。")
                     temp.replace(path)
                 except RuntimeError as exc:
                     raise RuntimeError(f"{key}: {exc}. Retrieve the advertised ZIP "
-                                       f"through DATA.GOV.HK and place it at {path}.") from exc
+                                       f"through DATA.GOV.HK and place it at {path}. / 请从 DATA.GOV.HK 下载归档并放到上述路径。") from exc
                 finally:
                     temp.unlink(missing_ok=True)
             if path.stat().st_size != advertised:
-                raise ValueError(f"{path.name}: cached size differs from official metadata.")
+                raise ValueError(f"{path.name}: cached size differs from official metadata. / 缓存大小与官方元数据不符。")
             with zipfile.ZipFile(path) as archive:
                 members = archive_members(archive)
             verified[path] = (resolved, sha256_file(path), members)
-            logger.info("已核对 ZIP 大小并计算 SHA-256：%s（%s 个 XML）。", path, f"{len(members):,}")
+            logger.info("Verified ZIP size and computed SHA-256 for %s (%s XML files). / 已核对 ZIP 大小并计算 SHA-256。", path, f"{len(members):,}")
         resolved, digest, members = verified[path]
         prefix = day if month else None
         count = sum(not prefix or Path(n).name.startswith(prefix + "-") for n in members)
         if count != row["snapshot_versions"]:
-            raise ValueError(f"{day}: archive has {count} matching snapshots; API lists {row['snapshot_versions']}.")
+            raise ValueError(f"{day}: archive has {count} matching snapshots; API lists {row['snapshot_versions']}. / XML 数量与官方接口记录不符。")
         manifest.append({"day": day, "source_url": SOURCE_XML, "retrieval_url": url,
                          "resolved_url": resolved, "size_bytes": path.stat().st_size,
                          "sha256": digest, "version_count": count,
@@ -133,13 +134,13 @@ def download_archives(config, archive_dir, probe=None):
 
 
 def prepare_lane_subset(root, config, archive_dir, manifest):
-    """从每个归档流式读取目标检测器记录并保留快照来源。 / Stream selected detector rows from each archive and preserve snapshot lineage."""
+    """Stream selected detector rows from each archive and preserve snapshot lineage. / 从每个归档流式读取目标检测器记录并保留快照来源。"""
     days = archive_dates(config)
     entries = {r["day"]: r for r in manifest}
     if set(days) != set(entries):
-        raise ValueError("Manifest dates must match the configuration.")
+        raise ValueError("Manifest dates must match the configuration. / 清单日期必须与配置一致。")
     ids = set(pd.read_csv(root / config["detectors"], dtype=str)["detector_id"])
-    logger.info("校验 %d 天的本地档案并提取 %d 个目标检测点的车道记录。", len(days), len(ids))
+    logger.info("Verifying %d days of local archives and extracting lane records for %d detectors. / 校验本地档案并提取目标点位的车道记录。", len(days), len(ids))
     hashes = {}
     for day in days:
         item = entries[day]
@@ -147,7 +148,7 @@ def prepare_lane_subset(root, config, archive_dir, manifest):
         if path not in hashes:
             hashes[path] = sha256_file(path)
         if path.stat().st_size != item["size_bytes"] or hashes[path] != item["sha256"]:
-            raise ValueError(f"{path}: size or SHA-256 mismatch.")
+            raise ValueError(f"{path}: size or SHA-256 mismatch. / 文件大小或 SHA-256 不符。")
     out = root / config["input"]
     out.parent.mkdir(parents=True, exist_ok=True)
     temp = out.with_suffix(".part")
@@ -166,7 +167,7 @@ def prepare_lane_subset(root, config, archive_dir, manifest):
                             date = source.findtext("date")
                             periods = source.findall("./periods/period")
                             if not date or not periods:
-                                raise ValueError("missing XML observation date or periods")
+                                raise ValueError("Missing XML observation date or periods. / XML 缺少观测日期或时段。")
                             for period in periods:
                                 start, end = (period.findtext(k) for k in ("period_from", "period_to"))
                                 for detector in period.findall("./detectors/detector"):
@@ -184,17 +185,18 @@ def prepare_lane_subset(root, config, archive_dir, manifest):
                             totals["periods"] += len(periods)
                             totals["snapshots"] += 1
                         except (ET.ParseError, ValueError) as exc:
-                            raise ValueError(f"{day}/{member}: {exc}") from exc
+                            raise ValueError(f"Invalid XML in {day}/{member}. / XML 格式无效。 {exc}") from exc
                 if totals["snapshots"] != entries[day]["version_count"]:
-                    raise ValueError(f"{day}: XML count differs from manifest.")
+                    raise ValueError(f"{day}: XML count differs from manifest. / XML 数量与清单不符。")
                 audit.append(totals)
-                logger.info("%s：读取 %s 个 XML，提取 %s 条车道记录。",
+                logger.info("%s: parsed %s XML files and extracted %s lane records. / 已读取当日 XML 并提取车道记录。",
                             day, f"{totals['snapshots']:,}", f"{totals['selected_lane_rows']:,}")
         temp.replace(out)
     finally:
         temp.unlink(missing_ok=True)
     write_json(root / config["manifest"], manifest)
     write_json(root / config["extraction_audit"], audit)
-    logger.info("已保存 %s 条车道记录：%s", f"{sum(day['selected_lane_rows'] for day in audit):,}", out)
-    logger.info("已保存归档清单及提取审计：%s、%s。", root / config["manifest"], root / config["extraction_audit"])
+    logger.info("Saved %s lane records to %s. / 已保存车道记录。", f"{sum(day['selected_lane_rows'] for day in audit):,}", out)
+    logger.info("Saved archive manifest and extraction audit to %s and %s. / 已保存归档清单及提取审计。",
+                root / config["manifest"], root / config["extraction_audit"])
     return audit

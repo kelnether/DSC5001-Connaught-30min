@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "connaught-traffic-forecast"
 version = "0.1.0"
-description = "DSC5001 30-minute-ahead forecasting of vehicle-weighted mean speed at individual detectors"
+description = "DSC5001 30-minute-ahead forecast of vehicle-weighted mean speed at each detector / DSC5001 检测点提前 30 分钟车辆数加权平均车速预测"
 requires-python = ">=3.11"
 readme = "README.md"
 dependencies = [

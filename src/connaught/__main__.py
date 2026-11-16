@@ -1,4 +1,4 @@
-"""支持 python -m connaught。 / Support execution with python -m connaught."""
+"""Support execution with python -m connaught. / 支持 python -m connaught。"""
 
 from .cli import main
 
