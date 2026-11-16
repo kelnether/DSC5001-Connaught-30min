@@ -1,7 +1,7 @@
 # Connaught Road West and Flyover · 30-Minute-Ahead Detector-Level Mean Speed Forecasting
 
 [简体中文](#简体中文)
-
+**DSC5001 · Group 100004: DENG Tianyu; XIA Tianquan; ZHANG Yue; LI Wenhao; ZHAO Yining**
 A runnable working project for a five-person DSC5001 team. The verified scope covers Connaught Road West and its flyover. Connaught Road Central requires a separate coverage check.
 
 ### Forecast target and outputs
