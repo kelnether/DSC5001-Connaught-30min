@@ -1,7 +1,7 @@
 {
   "notebook_cells_executed": 3,
   "kernel": "IPython InteractiveShell",
-  "core_sha256": "3de92db5f7802bc7cc507e8534705c74b200cf1d73f8280af43ced4b551d0701",
+  "core_sha256": "2e925d455825f090871bac4ea382e9b144c9248ed4bd9aa603d8f3db6a2e2b83",
   "cli_notebook_metrics_predictions_reports_byte_identical": true,
   "all_2454_target_labels_rejoined_and_verified": true,
   "model_metrics_independently_recomputed": true,
@@ -32,5 +32,6 @@
   "chronological_tuning_smoke_verified": true,
   "modular_pipeline_pilot_outputs_unchanged": true,
   "cli_and_notebook_stage_output_verified": true,
-  "original_pilot_artifacts_matching_count": 15
+  "original_pilot_artifacts_matching_count": 15,
+  "english_first_bilingual_code_and_cli_verified": true
 }

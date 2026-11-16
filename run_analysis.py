@@ -1,4 +1,4 @@
-"""运行旧版分析入口。 / Run the backward-compatible analysis entry point."""
+"""Run the backward-compatible analysis entry point. / 运行旧版分析入口。"""
 
 from pathlib import Path
 import sys

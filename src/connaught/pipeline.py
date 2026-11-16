@@ -1,4 +1,4 @@
-"""连接清洗、特征、模型、评估与报告。 / Orchestrate preprocessing, features, models, evaluation and reporting."""
+"""Orchestrate preprocessing, features, models, evaluation and reporting. / 连接清洗、特征、模型、评估与报告。"""
 
 import json
 import logging
@@ -28,9 +28,8 @@ def run(root, config, output_dir=None):
     panel, coverage, raw = build_panel(root, config)
     examples = make_examples(panel, config)
     train, test = split_at(examples, config["test_start"], config["end_exclusive"])
-    logger.info("按时间切分：%s 条可用建模行，训练 %s 条，测试 %s 条，"
-                "%s 条因时间边界未纳入。"
-                "最后训练目标 %s，最早测试起点 %s。",
+    logger.info("Chronological split: %s eligible rows, %s train, %s test, %s excluded at the boundary."
+                " Last training target %s; first test origin %s. / 已按时间切分并核对训练和测试边界。",
                 f"{len(examples):,}", f"{len(train):,}", f"{len(test):,}",
                 f"{len(examples) - len(train) - len(test):,}",
                 train["target_end"].max(), test["origin"].min())
@@ -73,8 +72,8 @@ def run(root, config, output_dir=None):
     for name, table in tables.items():
         table.to_csv(output / f"{name}.csv", index=False)
     write_json(output / "summary.json", summary)
-    logger.info("已保存预测、误差、选参结果、Ridge 系数和运行摘要：%s → %s",
-                "、".join([*(f"{name}.csv" for name in tables), "summary.json"]), output)
+    logger.info("Saved predictions, errors, tuning scores, Ridge coefficients and summary: %s → %s. / 已保存预测、评估、选参与摘要。",
+                ", ".join([*(f"{name}.csv" for name in tables), "summary.json"]), output)
     figures = save_figures(panel, predictions, scores, output, config)
     manifest = json.loads((root / config["manifest"]).read_text())
     probe = root / "data/provenance/study_archive_probe.json"
@@ -82,7 +81,7 @@ def run(root, config, output_dir=None):
     report_path = output / "report.html"
     report_path.write_text(build_report(config, summary, coverage, scores, grouped, cv, coefficients,
                                       figures, manifest, load_config(root, "study"), archive_probe), encoding="utf-8")
-    logger.info("离线 HTML 报告已生成：%s", report_path)
+    logger.info("Generated offline HTML report at %s. / 已生成离线 HTML 报告。", report_path)
     if config["name"] == "pilot" and output_dir is None:
         shutil.copyfile(report_path, root / "report.html")
     return {"output": output, "summary": summary, "coverage": coverage, "metrics": scores,

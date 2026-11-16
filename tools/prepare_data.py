@@ -1,4 +1,4 @@
-"""运行旧版归档准备入口。 / Run the backward-compatible archive preparation entry point."""
+"""Run the backward-compatible archive preparation entry point. / 运行旧版归档准备入口。"""
 
 from pathlib import Path
 import sys

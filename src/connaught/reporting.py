@@ -1,4 +1,4 @@
-"""生成可离线打开的中文团队报告。 / Generate the offline Chinese team report."""
+"""Generate the offline Chinese team report. / 生成可离线打开的中文团队报告。"""
 
 from html import escape
 import json
@@ -9,7 +9,7 @@ from .evaluation import MODEL_DISPLAY
 
 
 def term(label):
-    """以行内小字标注关键英文术语。 / Annotate key English terms inline."""
+    """Annotate key English terms inline. / 以行内小字标注关键英文术语。"""
     return f'（<span class="term" lang="en">{escape(label)}</span>）'
 
 
@@ -29,7 +29,7 @@ LANE_PILOT = [
 
 
 def build_lane_decision():
-    """展示试验依据和车道口径。 / Present the lane trial and the resulting design decision."""
+    """Present the lane trial and the resulting design decision. / 展示试验依据和车道口径。"""
     labels = {
         "static_count": "加入车道数",
         "gap_matched": "加入速度差（共同可用样本）",
@@ -61,7 +61,7 @@ def build_lane_decision():
 
 
 def build_team_guide(study):
-    """生成小组导读与提案工作台。 / Build the team guide and proposal workspace."""
+    """Build the team guide and proposal workspace. / 生成小组导读与提案工作台。"""
     start, end = (pd.Timestamp(study[k]) for k in ("start", "end_exclusive"))
     expected = 12 * (end - start).days * (24 * 60 // study["bin_minutes"])
     return f"""
@@ -206,7 +206,7 @@ def build_proposal(study):
 
 
 def build_main_report_guide():
-    """映射课程最终报告的十页结构。 / Map the ten-page final-report template to project evidence."""
+    """Map the ten-page final-report template to project evidence. / 映射课程最终报告的十页结构。"""
     return f"""
 <section id="main-report">
 <div class="chapter-label">04 · 最终报告</div>

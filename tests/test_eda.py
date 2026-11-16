@@ -1,4 +1,4 @@
-"""核对开发期 EDA 的数据边界。 / Check the development EDA data boundary."""
+"""Check the development EDA data boundary. / 核对开发期 EDA 的数据边界。"""
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -18,7 +18,7 @@ class DevelopmentEDATest(unittest.TestCase):
             result = run_eda(root, config, directory)
             panel = pd.read_csv(result["output"] / "five_minute_panel.csv.gz", parse_dates=["bin_end"])
             holdout = pd.Timestamp(config["test_start"])
-            # 分界点收尾的时间箱属于此前五分钟。 / The bin ending at the boundary belongs to the prior interval.
+            # The bin ending at the boundary belongs to the prior interval. / 分界点收尾的时间箱属于此前五分钟。
             self.assertEqual(panel["bin_end"].max(), holdout)
             self.assertTrue((panel["bin_end"] - pd.Timedelta(seconds=1) < holdout).all())
 

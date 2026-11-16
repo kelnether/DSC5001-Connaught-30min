@@ -1,4 +1,4 @@
-"""误差、分组、配对消融和按日重采样。 / Error metrics, subgroups, paired ablation and day resampling."""
+"""Error metrics, subgroups, paired ablation and day resampling. / 误差、分组、配对消融和按日重采样。"""
 
 import logging
 
@@ -32,7 +32,8 @@ def score_table(pred, by=None):
     scores = pd.DataFrame(rows)
     if by is None and scores["mae"].notna().any():
         best = scores.loc[scores["mae"].idxmin()]
-        logger.info("在 %s 条共同测试样本上比较 %d 个模型；最低 MAE 为 %s 的 %.3f km/h。",
+        logger.info("Evaluated %s shared test rows across %d models. %s had the lowest MAE (%.3f km/h)."
+                    " / 在共同测试样本上比较模型并给出最低 MAE。",
                     f"{len(pred):,}", len(scores), MODEL_DISPLAY[best["model"]], best["mae"])
     return scores
 
@@ -47,7 +48,8 @@ def paired_ablation(pred, seed):
         sims = by_day["sum"].to_numpy()[picks].sum(axis=1) / by_day["size"].to_numpy()[picks].sum(axis=1)
         interval = [float(v) for v in np.quantile(sims, [0.025, 0.975])]
     gain = float(difference.mean())
-    logger.info("配对消融：加入流量和占用率后，MAE 改善 %+.3f km/h（%d 个测试日期）。",
+    logger.info("Paired ablation: MAE reduction from flow and occupancy was %+.3f km/h (%d test days)."
+                " / 配对消融：报告加入流量和占用率后的 MAE 改善量。",
                 gain, len(by_day))
     return {"full_mae_improvement_kmh": gain, "test_days": len(by_day),
             "paired_daily_bootstrap_95pct": interval}
