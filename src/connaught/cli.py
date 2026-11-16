@@ -2,27 +2,46 @@
 
 import argparse
 import json
+import logging
 from pathlib import Path
+import sys
 
 from .config import load_config, project_root
+
+logger = logging.getLogger(__name__)
+
+
+def configure_console():
+    """在终端或 Notebook 输出各阶段日志。 / Show package progress in a terminal or notebook."""
+    package_logger = logging.getLogger("connaught")
+    for handler in package_logger.handlers[:]:
+        if handler.get_name() == "connaught-console":
+            package_logger.removeHandler(handler)
+            handler.close()
+    handler = logging.StreamHandler(sys.stdout)
+    handler.set_name("connaught-console")
+    handler.setFormatter(logging.Formatter("[%(name)s] %(message)s"))
+    package_logger.addHandler(handler)
+    package_logger.setLevel(logging.INFO)
+    package_logger.propagate = False
 
 
 def _run(args, root, config):
     if args.coverage_only:
         from .preprocessing import audit_coverage
-        print(f"Coverage: {audit_coverage(root, config, args.output)}")
+        logger.info("仅审计覆盖率。")
+        audit_coverage(root, config, args.output)
         return
 
     from .pipeline import run
     result = run(root, config, args.output)
+    print("\n模型误差（相同测试样本，MAE、RMSE 和偏差单位均为 km/h）", flush=True)
     print(result["metrics"].to_string(index=False, float_format=lambda value: f"{value:.4f}"))
-    print(f'Report: {result["report"]}')
 
 
 def _eda(args, root, config):
     from .eda import run_eda
-    result = run_eda(root, config, args.output, include_holdout=args.include_holdout)
-    print(f'EDA: {result["output"]}')
+    run_eda(root, config, args.output, include_holdout=args.include_holdout)
 
 
 def _prepare(args, root, config):
@@ -31,13 +50,14 @@ def _prepare(args, root, config):
 
     archive_dir = args.archive_dir or root / ".cache/traffic_archives"
     if args.manifest:
+        logger.info("根据清单导入本地 ZIP。清单 %s，归档目录 %s。", args.manifest, archive_dir)
         manifest = json.loads(args.manifest.read_text())
     else:
         probe = probe_archives(config)
         destination = root / f"data/provenance/{config['name']}_archive_probe.json"
         write_json(destination, probe)
         available = sum(bool(row.get("snapshot_versions") and row.get("official_package")) for row in probe)
-        print(f"Archive metadata: {available}/{len(probe)} days advertised. {destination}")
+        logger.info("归档元数据可用 %d/%d 天。已保存查询结果 %s。", available, len(probe), destination)
         if args.probe:
             return
         manifest = download_archives(config, archive_dir, probe)
@@ -74,5 +94,9 @@ def main(argv=None, *, default_root=None):
         command.add_argument("--output", help="Write into a separate result directory.")
 
     args = parser.parse_args(argv)
+    configure_console()
     root = project_root(args.root or default_root)
-    args.handler(args, root, load_config(root, args.config))
+    config = load_config(root, args.config)
+    logger.info("开始 %s。配置 %s，观察窗口 %s 至 %s（右端不含）。",
+                args.command, config["name"], config["start"], config["end_exclusive"])
+    args.handler(args, root, config)

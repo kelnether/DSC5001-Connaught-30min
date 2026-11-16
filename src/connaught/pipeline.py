@@ -1,6 +1,7 @@
 """连接清洗、特征、模型、评估与报告。 / Orchestrate preprocessing, features, models, evaluation and reporting."""
 
 import json
+import logging
 from pathlib import Path
 import shutil
 
@@ -18,6 +19,8 @@ from .plotting import save_figures
 from .preprocessing import build_panel
 from .reporting import LANE_PILOT, build_report
 
+logger = logging.getLogger(__name__)
+
 
 def run(root, config, output_dir=None):
     output = Path(output_dir).resolve() if output_dir else root / config["output"]
@@ -25,6 +28,12 @@ def run(root, config, output_dir=None):
     panel, coverage, raw = build_panel(root, config)
     examples = make_examples(panel, config)
     train, test = split_at(examples, config["test_start"], config["end_exclusive"])
+    logger.info("按时间切分：%s 条可用建模行，训练 %s 条，测试 %s 条，"
+                "%s 条因时间边界未纳入。"
+                "最后训练目标 %s，最早测试起点 %s。",
+                f"{len(examples):,}", f"{len(train):,}", f"{len(test):,}",
+                f"{len(examples) - len(train) - len(test):,}",
+                train["target_end"].max(), test["origin"].min())
     specs, cv = choose_parameters(examples, config)
     predictions, coefficients = predict_all(train, test, specs, config)
     scores = score_table(predictions)
@@ -59,10 +68,13 @@ def run(root, config, output_dir=None):
         "ablation": ablation,
     }
     write_eda_outputs(panel, coverage, raw, output)
-    for name, table in {"predictions": predictions, "model_metrics": scores,
-                        "errors_by_group": grouped, "cv_scores": cv, "ridge_coefficients": coefficients}.items():
+    tables = {"predictions": predictions, "model_metrics": scores,
+              "errors_by_group": grouped, "cv_scores": cv, "ridge_coefficients": coefficients}
+    for name, table in tables.items():
         table.to_csv(output / f"{name}.csv", index=False)
     write_json(output / "summary.json", summary)
+    logger.info("已保存预测、误差、选参结果、Ridge 系数和运行摘要：%s → %s",
+                "、".join([*(f"{name}.csv" for name in tables), "summary.json"]), output)
     figures = save_figures(panel, predictions, scores, output, config)
     manifest = json.loads((root / config["manifest"]).read_text())
     probe = root / "data/provenance/study_archive_probe.json"
@@ -70,6 +82,7 @@ def run(root, config, output_dir=None):
     report_path = output / "report.html"
     report_path.write_text(build_report(config, summary, coverage, scores, grouped, cv, coefficients,
                                       figures, manifest, load_config(root, "study"), archive_probe), encoding="utf-8")
+    logger.info("离线 HTML 报告已生成：%s", report_path)
     if config["name"] == "pilot" and output_dir is None:
         shutil.copyfile(report_path, root / "report.html")
     return {"output": output, "summary": summary, "coverage": coverage, "metrics": scores,

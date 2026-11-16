@@ -1,15 +1,19 @@
 """原型 EDA 与预测诊断绘图。 / EDA and forecast diagnostics."""
 
+import logging
+
 import pandas as pd
 
 from .evaluation import MODEL_DISPLAY
 
+logger = logging.getLogger(__name__)
 
 
 def _save_figure(plt, fig, folder, name):
     path = folder / f"{name}.png"
     fig.savefig(path, dpi=145, bbox_inches="tight", facecolor="white")
     plt.close(fig)
+    logger.info("已保存图表：%s", path)
     return path
 
 

@@ -2,7 +2,7 @@
 
 [English](#english)
 
-DSC5001 五人小组的可运行工作底稿。当前范围覆盖干诺道西及西天桥。
+DSC5001 五人小组的可运行工作底稿。当前范围覆盖干诺道西及西天桥，干诺道中尚待核验。
 
 ## 预测目标与结果口径
 
@@ -59,6 +59,21 @@ Windows PowerShell 用 `.venv\Scripts\Activate.ps1` 激活。已安装项目后�
 `eda` 默认将观察窗口截在测试起始日之前，输出覆盖率、质量统计、五分钟面板和两张 EDA 图。原型默认写入 `results/pilot/eda/development/`。需要做全期描述时才显式使用 `--include-holdout`。`run` 拟合模型并输出预测、误差、图表和报告，默认写入 `results/pilot/` 或 `results/study/`。两个命令都接受 `--output`，各人可以使用独立目录。若从项目外执行，传入 `--root PATH`。
 
 在 Jupyter 或 VS Code 中选择同一环境，打开 `traffic_analysis.ipynb` 并执行 **Run All**。Notebook 直接导入这些模块，末尾附各源码文件的完整快照。设置 `CONNAUGHT_STAGE=eda` 可只跑开发期 EDA，`CONNAUGHT_CONFIG=study` 选择正式配置，`CONNAUGHT_OUTPUT` 指定输出目录。修改模块后运行 `python tools/sync_notebook.py` 更新快照，然后重新运行 Notebook。
+
+## 如何读运行输出
+
+终端和 Notebook 会按模块显示输入、处理范围、样本数和保存位置。方括号内的模块名对应 `src/connaught/` 中的文件。例如 `[connaught.preprocessing]` 对应 `preprocessing.py`。
+
+| 命令 | 终端输出与保存结果 |
+|---|---|
+| `connaught prepare --config study --probe` | 查询日期、可用天数和归档索引路径 |
+| `connaught prepare --config study --download` | 下载和校验 ZIP、逐日 XML 数和提取行数、车道记录与审计清单路径 |
+| `connaught run --config pilot --coverage-only` | 输入及有效记录数、可用点位和时间窗、三份覆盖率及质量文件 |
+| `connaught eda --config pilot` | 开发期范围、五分钟面板、覆盖率统计和两张图的路径 |
+| `connaught run --config pilot` | 清洗、特征和时间切分、训练的模型和参数、共同样本误差、四张图和 HTML 报告位置 |
+| `python tools/sync_notebook.py` / `--check` | 生成的 Notebook 路径或源码一致性核对结果 |
+
+例如完整原型的清洗阶段会显示输入 **181,455** 条车道记录、保留 **157,011** 条有效记录。时间切分会显示 **5,083** 条训练行和 **2,454** 条测试行。模型误差表最后统一显示 MAE、RMSE 和平均偏差。
 
 ## 文件组织
 
@@ -182,6 +197,10 @@ On Windows PowerShell, activate with `.venv\Scripts\Activate.ps1`. After install
 In Jupyter or VS Code, select the same environment and run all cells. The notebook imports the package and includes verbatim source snapshots. Set `CONNAUGHT_STAGE=eda` for development EDA, `CONNAUGHT_CONFIG=study` for the study or `CONNAUGHT_OUTPUT` for a separate directory. Regenerate the notebook after edits with `python tools/sync_notebook.py`, then rerun its cells.
 
 Run `python -m unittest discover -s tests` to check the default EDA time boundary.
+
+### Reading the run output
+
+Terminal and notebook output is labelled by the package module. Archive preparation reports ZIP checks and extracted row counts. Coverage and EDA report the input window and generated files. A full run also shows feature eligibility, the chronological split, model parameters, comparable errors, and paths to the figures and HTML report. The notebook sync command reports the generated file or verifies source parity.
 
 ### Six-week study
 

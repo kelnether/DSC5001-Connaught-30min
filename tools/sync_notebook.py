@@ -43,15 +43,18 @@ if root is None:
 sys.path.insert(0, str(root / "src"))
 
 from connaught.config import load_config
+from connaught.cli import configure_console
 from connaught.eda import run_eda
 from connaught.pipeline import run
 
 config = load_config(root, os.environ.get("CONNAUGHT_CONFIG", "pilot"))
 output_dir = os.environ.get("CONNAUGHT_OUTPUT")
 stage = os.environ.get("CONNAUGHT_STAGE", "run")
+print(f"配置：{config['name']} · 阶段：{stage} · 项目：{root}")
 '''
 
-RUN = '''if stage == "eda":
+RUN = '''configure_console()
+if stage == "eda":
     result = run_eda(root, config, output_dir)
 elif stage == "run":
     result = run(root, config, output_dir)
@@ -130,6 +133,7 @@ def main():
         print(f'Notebook matches {len(expected["metadata"]["canonical_sources"])} source files and all run cells.')
         return
     NOTEBOOK.write_text(json.dumps(expected, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    print(f'已生成 Notebook：{NOTEBOOK}（包含 {len(expected["metadata"]["canonical_sources"])} 份源码快照）。')
 
 
 if __name__ == "__main__":

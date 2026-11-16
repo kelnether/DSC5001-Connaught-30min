@@ -1,8 +1,11 @@
 """特征、预测标签与时序切分。 / Features, forecast labels and chronological splits."""
 
+import logging
+
 import numpy as np
 import pandas as pd
 
+logger = logging.getLogger(__name__)
 
 SPEED_FEATURES = ["speed", "speed_lag_5", "speed_lag_10", "target_sin", "target_cos", "target_weekend"]
 # 车道数用于覆盖率，速度差试验收益不稳定。 / Lane count supports coverage. Speed-gap gains were inconsistent.
@@ -32,7 +35,11 @@ def make_examples(panel, config):
     frame["time_group"] = np.select(
         [frame["target_hour"].between(7, 9), frame["target_hour"].between(17, 19)],
         ["07:00–09:59", "17:00–19:59"], default="Other")
-    return frame.dropna(subset=FULL_FEATURES + ["target_speed"]).reset_index(drop=True)
+    examples = frame.dropna(subset=FULL_FEATURES + ["target_speed"]).reset_index(drop=True)
+    logger.info("构造当前、滞后车速和时间特征；目标为同一检测点提前 %d 分钟的五分钟均速。"
+                "完整特征和标签保留 %s/%s 行。",
+                h, f"{len(examples):,}", f"{len(frame):,}")
+    return examples
 
 
 def split_at(examples, start, end):

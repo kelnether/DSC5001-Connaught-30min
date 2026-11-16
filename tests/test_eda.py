@@ -21,3 +21,7 @@ class DevelopmentEDATest(unittest.TestCase):
             # 分界点收尾的时间箱属于此前五分钟。 / The bin ending at the boundary belongs to the prior interval.
             self.assertEqual(panel["bin_end"].max(), holdout)
             self.assertTrue((panel["bin_end"] - pd.Timedelta(seconds=1) < holdout).all())
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

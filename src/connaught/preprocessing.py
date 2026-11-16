@@ -1,5 +1,6 @@
 """清洗车道记录并生成五分钟检测点面板。 / Clean lane records and build five-minute detector panels."""
 
+import logging
 from pathlib import Path
 
 import numpy as np
@@ -7,12 +8,16 @@ import pandas as pd
 
 from .artifacts import sha256_file, write_json
 
+logger = logging.getLogger(__name__)
+
 
 def build_panel(root, config):
     """汇总同一检测点的合格车道记录。 / Aggregate valid lane observations within each detector."""
     input_path = root / config["input"]
     if not input_path.is_file():
         raise FileNotFoundError(f"Missing {input_path}. See README.md for preparation.")
+    logger.info("读取车道记录 %s；按点位生成五分钟加权车速，覆盖率门槛 %.0f%%。",
+                input_path, 100 * config["min_coverage"])
     meta = pd.read_csv(root / config["detectors"], dtype={"detector_id": str})
     if meta["detector_id"].duplicated().any():
         raise ValueError("Detector IDs in the reference table must be unique.")
@@ -69,6 +74,10 @@ def build_panel(root, config):
     coverage = panel.groupby(["detector_id", "road_group"], as_index=False).agg(
         expected_bins=("bin_end", "size"), usable_bins=("speed", "count"), mean_lane_coverage=("coverage", "mean"))
     coverage["usable_share"] = coverage["usable_bins"] / coverage["expected_bins"]
+    logger.info("清洗完成：输入 %s 条车道记录，保留 %s 条有效记录；%s/%s 个检测点有可用车速，"
+                "%s/%s 个五分钟时间窗可用。",
+                f"{len(raw):,}", f"{len(clean):,}", raw_summary["usable_detectors"], len(meta),
+                f"{raw_summary['usable_bins']:,}", f"{len(panel):,}")
     return panel, coverage, raw_summary
 
 
@@ -84,6 +93,8 @@ def write_coverage_outputs(panel, coverage, quality, output):
     coverage.to_csv(output / "detector_coverage.csv", index=False)
     daily_coverage(panel).to_csv(output / "daily_coverage.csv", index=False)
     write_json(output / "data_quality.json", quality)
+    logger.info("已保存点位覆盖率、逐日覆盖率和数据质量统计："
+                "detector_coverage.csv、daily_coverage.csv、data_quality.json → %s", output)
 
 
 def audit_coverage(root, config, output_dir=None):

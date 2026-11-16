@@ -1,5 +1,7 @@
 """基线、Ridge、随机森林和时序选参。 / Benchmarks, Ridge, random forest and chronological tuning."""
 
+import logging
+
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
@@ -10,6 +12,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from .evaluation import evaluate
 from .features import FULL_FEATURES, SPEED_FEATURES, split_at
+
+logger = logging.getLogger(__name__)
 
 
 def historical_baseline(train, test):
@@ -52,6 +56,10 @@ def choose_parameters(examples, config):
         ("random_forest", "forest", config["forest_leaf_sizes"], FULL_FEATURES),
     ]
     folds = [split_at(examples, f["start"], f["end"]) for f in config.get("validation", [])]
+    if folds:
+        logger.info("使用 %d 折时序验证按 MAE 选参。", len(folds))
+    else:
+        logger.info("使用原型配置的固定参数。")
     rows, selected = [], {}
     for label, family, candidates, features in families:
         if not folds and len(candidates) > 1:
@@ -76,8 +84,12 @@ def predict_all(train, test, specs, config):
                  "target_weekend", "time_group", "speed", "target_speed"]].copy()
     pred["persistence"] = test["speed"]
     pred["historical"], pred["historical_level"] = historical_baseline(train, test)
+    logger.info("已为 %s 条测试样本生成 Persistence 和历史中位数基线预测。", f"{len(test):,}")
     coefficients = pd.DataFrame()
     for label, (family, value, features) in specs.items():
+        parameter = "alpha" if family == "ridge" else "min_samples_leaf"
+        logger.info("拟合 %s：%s=%s，%d 项数值或二元特征，另含点位编码。",
+                    label, parameter, value, len(features))
         model = build_model(family, value, features, config)
         cols = features + ["detector_id"]
         model.fit(train[cols], train["target_speed"])

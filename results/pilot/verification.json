@@ -1,7 +1,7 @@
 {
   "notebook_cells_executed": 3,
   "kernel": "IPython InteractiveShell",
-  "core_sha256": "3a77fd62a51fde6f30fe2c642624ea0748f627f05b6901f1aa0e0957c994a849",
+  "core_sha256": "3de92db5f7802bc7cc507e8534705c74b200cf1d73f8280af43ced4b551d0701",
   "cli_notebook_metrics_predictions_reports_byte_identical": true,
   "all_2454_target_labels_rejoined_and_verified": true,
   "model_metrics_independently_recomputed": true,
@@ -30,5 +30,7 @@
   "development_eda_time_boundary_verified": true,
   "offline_zip_import_verified": true,
   "chronological_tuning_smoke_verified": true,
-  "modular_pipeline_pilot_outputs_unchanged": true
+  "modular_pipeline_pilot_outputs_unchanged": true,
+  "cli_and_notebook_stage_output_verified": true,
+  "original_pilot_artifacts_matching_count": 15
 }

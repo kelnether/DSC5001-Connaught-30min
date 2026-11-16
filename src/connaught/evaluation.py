@@ -1,8 +1,11 @@
 """误差、分组、配对消融和按日重采样。 / Error metrics, subgroups, paired ablation and day resampling."""
 
+import logging
+
 import numpy as np
 import pandas as pd
 
+logger = logging.getLogger(__name__)
 
 MODEL_NAMES = ["persistence", "historical", "ridge_speed_only", "ridge_full", "random_forest"]
 MODEL_DISPLAY = {
@@ -26,7 +29,12 @@ def score_table(pred, by=None):
             score = evaluate(part["target_speed"], part[model])
             rows.append({"group": str(key), "model": model, **score,
                          "mae_gain_vs_persistence_pct": 100 * (base - score["mae"]) / base if base else np.nan})
-    return pd.DataFrame(rows)
+    scores = pd.DataFrame(rows)
+    if by is None and scores["mae"].notna().any():
+        best = scores.loc[scores["mae"].idxmin()]
+        logger.info("在 %s 条共同测试样本上比较 %d 个模型；最低 MAE 为 %s 的 %.3f km/h。",
+                    f"{len(pred):,}", len(scores), MODEL_DISPLAY[best["model"]], best["mae"])
+    return scores
 
 
 def paired_ablation(pred, seed):
@@ -38,5 +46,8 @@ def paired_ablation(pred, seed):
         picks = rng.integers(0, len(by_day), size=(2000, len(by_day)))
         sims = by_day["sum"].to_numpy()[picks].sum(axis=1) / by_day["size"].to_numpy()[picks].sum(axis=1)
         interval = [float(v) for v in np.quantile(sims, [0.025, 0.975])]
-    return {"full_mae_improvement_kmh": float(difference.mean()), "test_days": len(by_day),
+    gain = float(difference.mean())
+    logger.info("配对消融：加入流量和占用率后，MAE 改善 %+.3f km/h（%d 个测试日期）。",
+                gain, len(by_day))
+    return {"full_mae_improvement_kmh": gain, "test_days": len(by_day),
             "paired_daily_bootstrap_95pct": interval}

@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 import csv
 import gzip
 import json
+import logging
 from pathlib import Path
 import shutil
 import subprocess
@@ -14,6 +15,8 @@ import zipfile
 import pandas as pd
 
 from .artifacts import sha256_file, write_json
+
+logger = logging.getLogger(__name__)
 
 
 SOURCE_XML = "https://resource.data.one.gov.hk/td/traffic-detectors/rawSpeedVol-all.xml"
@@ -52,6 +55,9 @@ def fetch_json(url):
 
 def probe_archives(config):
     """核对逐日快照数量及官方 ZIP 归档方式。 / Check daily snapshot counts and the available official ZIP packaging."""
+    days = archive_dates(config)
+    logger.info("向官方档案 API 查询 %d 天的快照和 ZIP 元数据。", len(days))
+
     def one_day(day):
         try:
             body = fetch_json(archive_url("list-file-versions", start=day, end=day))
@@ -66,7 +72,7 @@ def probe_archives(config):
             return {"day": day, "error": str(exc)}
 
     with ThreadPoolExecutor(max_workers=4) as pool:
-        return list(pool.map(one_day, archive_dates(config)))
+        return list(pool.map(one_day, days))
 
 
 def archive_members(archive, day_prefix=None):
@@ -95,6 +101,7 @@ def download_archives(config, archive_dir, probe=None):
             resolved = None
             advertised = int(bundle["size"])
             if not path.is_file():
+                logger.info("开始下载 %s（%s 字节）。", path.name, f"{advertised:,}")
                 temp = path.with_suffix(".part")
                 try:
                     resolved = fetch_archive_resource(url, temp).decode("utf-8")
@@ -111,6 +118,7 @@ def download_archives(config, archive_dir, probe=None):
             with zipfile.ZipFile(path) as archive:
                 members = archive_members(archive)
             verified[path] = (resolved, sha256_file(path), members)
+            logger.info("已核对 ZIP 大小并计算 SHA-256：%s（%s 个 XML）。", path, f"{len(members):,}")
         resolved, digest, members = verified[path]
         prefix = day if month else None
         count = sum(not prefix or Path(n).name.startswith(prefix + "-") for n in members)
@@ -131,6 +139,7 @@ def prepare_lane_subset(root, config, archive_dir, manifest):
     if set(days) != set(entries):
         raise ValueError("Manifest dates must match the configuration.")
     ids = set(pd.read_csv(root / config["detectors"], dtype=str)["detector_id"])
+    logger.info("校验 %d 天的本地档案并提取 %d 个目标检测点的车道记录。", len(days), len(ids))
     hashes = {}
     for day in days:
         item = entries[day]
@@ -179,10 +188,13 @@ def prepare_lane_subset(root, config, archive_dir, manifest):
                 if totals["snapshots"] != entries[day]["version_count"]:
                     raise ValueError(f"{day}: XML count differs from manifest.")
                 audit.append(totals)
-                print(f"{day}: {totals['snapshots']} XML, {totals['selected_lane_rows']:,} selected lane rows")
+                logger.info("%s：读取 %s 个 XML，提取 %s 条车道记录。",
+                            day, f"{totals['snapshots']:,}", f"{totals['selected_lane_rows']:,}")
         temp.replace(out)
     finally:
         temp.unlink(missing_ok=True)
     write_json(root / config["manifest"], manifest)
     write_json(root / config["extraction_audit"], audit)
+    logger.info("已保存 %s 条车道记录：%s", f"{sum(day['selected_lane_rows'] for day in audit):,}", out)
+    logger.info("已保存归档清单及提取审计：%s、%s。", root / config["manifest"], root / config["extraction_audit"])
     return audit

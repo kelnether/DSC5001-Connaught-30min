@@ -1,0 +1,17 @@
+.venv/
+.cache/
+__pycache__/
+.ipynb_checkpoints/
+*.egg-info/
+data/raw/study/
+data/provenance/study_*.json
+!data/provenance/study_archive_probe.json
+results/study/
+
+# HTML 报告在本地生成。 / HTML reports are generated locally.
+report.html
+
+# 本地构建与 EDA 输出 / Local build and EDA output
+build/
+dist/
+results/pilot/eda/
