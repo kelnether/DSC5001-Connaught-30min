@@ -1,0 +1,46 @@
+[
+  {
+    "threshold": 0.6,
+    "sample": "all",
+    "n": 35239,
+    "full_mae_improvement_kmh": 0.0760870209632265,
+    "test_days": 14,
+    "paired_daily_bootstrap_95pct": [
+      0.05329513463041758,
+      0.10198851929370056
+    ]
+  },
+  {
+    "threshold": 0.6,
+    "sample": "common",
+    "n": 4294,
+    "full_mae_improvement_kmh": 0.06725415387035784,
+    "test_days": 14,
+    "paired_daily_bootstrap_95pct": [
+      0.03479010219711962,
+      0.10276309946666469
+    ]
+  },
+  {
+    "threshold": 0.7,
+    "sample": "all",
+    "n": 4294,
+    "full_mae_improvement_kmh": 0.06981903633674313,
+    "test_days": 14,
+    "paired_daily_bootstrap_95pct": [
+      0.04242445412739852,
+      0.09985995509395694
+    ]
+  },
+  {
+    "threshold": 0.7,
+    "sample": "common",
+    "n": 4294,
+    "full_mae_improvement_kmh": 0.06981903633674313,
+    "test_days": 14,
+    "paired_daily_bootstrap_95pct": [
+      0.04242445412739852,
+      0.09985995509395694
+    ]
+  }
+]

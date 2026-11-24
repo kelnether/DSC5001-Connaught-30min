@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NOTEBOOK = ROOT / "traffic_analysis.ipynb"
 MODULES = (
     "config", "artifacts", "archives", "preprocessing", "eda", "features",
-    "models", "evaluation", "plotting", "reporting", "pipeline",
+    "models", "evaluation", "plotting", "reporting", "pipeline", "study", "study_diagnostics",
     "cli", "__main__", "__init__", "workflow",
 )
 
@@ -19,11 +19,11 @@ INTRO = """# Connaught Road West and Flyover · 30-Minute-Ahead Detector Mean Sp
 
 Open this notebook in the extracted project, select the Python environment with project dependencies, and choose Run All. The executable cells call the same modules as the CLI. The source appendix includes each complete package file for inspection and handover.
 
-The target is the vehicle-weighted mean speed in the five-minute bin ending 30 minutes after the forecast origin at the same detector. Lane records support coverage checks and aggregation. The lane speed gap remains a candidate sensitivity analysis. The bundled three-day pilot runs by default. Set `CONNAUGHT_CONFIG=study` after preparing the study data.
+The target is the vehicle-weighted mean speed in the five-minute bin ending 30 minutes after the forecast origin at the same detector. The three-day pilot runs by default. Set `CONNAUGHT_CONFIG=study` for the six-week run, including chronological tuning, paired coverage checks, and held-out diagnostics.
 
 在解压后的项目目录打开 Notebook，选择安装了项目依赖的内核，然后 Run All。运行单元直接调用本项目的 Python 模块。末尾源码附录逐文件保留完整实现，便于阅读、核对和交接。
 
-预测目标为同一检测点在预测起点后第 30 分钟结束的 5 分钟加权平均车速。原始数据按车道存储，车道数用于覆盖率检查，速度差试验留作六周数据的候选敏感性分析。默认运行随包附带的三天原型。正式数据准备好后可设置 `CONNAUGHT_CONFIG=study`。
+预测目标为同一检测点在预测起点后第 30 分钟结束的 5 分钟加权平均车速。默认运行三天原型。设置 `CONNAUGHT_CONFIG=study` 可跑六周正式实验，包括时序选参、覆盖率配对检查和留出诊断。
 
 - `CONNAUGHT_STAGE=eda` · Run development-only EDA. / 只运行开发期 EDA。
 - `CONNAUGHT_OUTPUT` · Choose a separate output directory. / 指定独立输出目录。
@@ -51,6 +51,8 @@ from connaught.pipeline import run
 config = load_config(root, os.environ.get("CONNAUGHT_CONFIG", "pilot"))
 output_dir = os.environ.get("CONNAUGHT_OUTPUT")
 stage = os.environ.get("CONNAUGHT_STAGE", "run")
+if output_dir is None and stage == "run" and config["name"] == "pilot":
+    output_dir = root / "results" / "pilot-recheck"
 print(f"Config / 配置: {config['name']} · Stage / 阶段: {stage} · Project / 项目: {root}")
 '''
 
@@ -103,7 +105,7 @@ def build_notebook():
     ]
     hashes = {}
     paths = [f"src/connaught/{name}.py" for name in MODULES]
-    paths.extend(["run_analysis.py", "tools/prepare_data.py"])
+    paths.extend(["run_analysis.py", "tools/prepare_data.py", "tools/compare_horizons.py", "tools/verify_study.py"])
     for index, relative in enumerate(paths, 1):
         contents = (ROOT / relative).read_text(encoding="utf-8")
         hashes[relative] = hashlib.sha256(contents.encode()).hexdigest()

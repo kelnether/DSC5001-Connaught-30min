@@ -1,0 +1,10 @@
+{
+  "input_sha256": "2ff3a09e48370438a3a12773a302828df92ad98fae1b9055a34a6b9502dbd31e",
+  "alpha": 10.0,
+  "matched_key": [
+    "detector_id",
+    "origin"
+  ],
+  "split": "2026-10-18",
+  "analysis": "pilot horizon choice"
+}

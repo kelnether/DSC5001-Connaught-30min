@@ -153,44 +153,52 @@ def prepare_lane_subset(root, config, archive_dir, manifest):
     out.parent.mkdir(parents=True, exist_ok=True)
     temp = out.with_suffix(".part")
     audit = []
+    skip_invalid = config.get("skip_invalid_snapshots", False)
     try:
         with gzip.open(temp, "wt", encoding="utf-8", newline="") as stream:
             writer = csv.DictWriter(stream, fieldnames=DATA_COLUMNS)
             writer.writeheader()
             for day in days:
                 totals = {"day": day, "snapshots": 0, "periods": 0, "selected_lane_rows": 0}
+                if skip_invalid:
+                    totals["invalid_snapshots"] = []
                 item = entries[day]
                 with zipfile.ZipFile(archive_dir / item.get("archive_file", f"{day}.zip")) as archive:
                     for member in archive_members(archive, item.get("member_day_prefix")):
+                        totals["snapshots"] += 1
                         try:
                             source = ET.fromstring(archive.read(member))
                             date = source.findtext("date")
                             periods = source.findall("./periods/period")
                             if not date or not periods:
                                 raise ValueError("Missing XML observation date or periods. / XML 缺少观测日期或时段。")
-                            for period in periods:
-                                start, end = (period.findtext(k) for k in ("period_from", "period_to"))
-                                for detector in period.findall("./detectors/detector"):
-                                    key = detector.findtext("detector_id")
-                                    if key not in ids:
-                                        continue
-                                    for lane in detector.findall("./lanes/lane"):
-                                        row = {k: lane.findtext(k) for k in ("lane_id", "speed", "volume", "occupancy", "valid")}
-                                        row.update(date=date, period_from=start, period_to=end,
-                                                   detector_id=key, direction=detector.findtext("direction"),
-                                                   speed_sd=lane.findtext("s.d.") or lane.findtext("sd"),
-                                                   snapshot=member, archive_day=day)
-                                        writer.writerow(row)
-                                        totals["selected_lane_rows"] += 1
-                            totals["periods"] += len(periods)
-                            totals["snapshots"] += 1
                         except (ET.ParseError, ValueError) as exc:
-                            raise ValueError(f"Invalid XML in {day}/{member}. / XML 格式无效。 {exc}") from exc
+                            if not skip_invalid:
+                                raise ValueError(f"Invalid XML in {day}/{member}. / XML 格式无效。 {exc}") from exc
+                            totals["invalid_snapshots"].append({"member": member, "error": str(exc)})
+                            logger.warning("Excluded unreadable source snapshot %s. / 已登记并排除无法解析的源快照。", member)
+                            continue
+                        for period in periods:
+                            start, end = (period.findtext(k) for k in ("period_from", "period_to"))
+                            for detector in period.findall("./detectors/detector"):
+                                key = detector.findtext("detector_id")
+                                if key not in ids:
+                                    continue
+                                for lane in detector.findall("./lanes/lane"):
+                                    row = {k: lane.findtext(k) for k in ("lane_id", "speed", "volume", "occupancy", "valid")}
+                                    row.update(date=date, period_from=start, period_to=end,
+                                               detector_id=key, direction=detector.findtext("direction"),
+                                               speed_sd=lane.findtext("s.d.") or lane.findtext("sd"),
+                                               snapshot=member, archive_day=day)
+                                    writer.writerow(row)
+                                    totals["selected_lane_rows"] += 1
+                        totals["periods"] += len(periods)
                 if totals["snapshots"] != entries[day]["version_count"]:
                     raise ValueError(f"{day}: XML count differs from manifest. / XML 数量与清单不符。")
                 audit.append(totals)
-                logger.info("%s: parsed %s XML files and extracted %s lane records. / 已读取当日 XML 并提取车道记录。",
-                            day, f"{totals['snapshots']:,}", f"{totals['selected_lane_rows']:,}")
+                parsed = totals["snapshots"] - len(totals.get("invalid_snapshots", []))
+                logger.info("%s: parsed %s/%s XML files and extracted %s lane records. / 已读取当日 XML 并提取车道记录。",
+                            day, f"{parsed:,}", f"{totals['snapshots']:,}", f"{totals['selected_lane_rows']:,}")
         temp.replace(out)
     finally:
         temp.unlink(missing_ok=True)

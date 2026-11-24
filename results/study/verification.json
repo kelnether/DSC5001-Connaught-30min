@@ -1,0 +1,12 @@
+{
+  "archive_days": 42,
+  "archive_snapshots": 39292,
+  "invalid_snapshots": 1,
+  "extracted_lane_rows": 2267922,
+  "primary_test_rows": 35239,
+  "alternative_test_rows": 4294,
+  "shared_test_rows": 4294,
+  "source_archives_rehashed": true,
+  "labels_verified_against_panel_and_metrics_recomputed": true,
+  "frozen_parameters_and_cv_summary_verified": true
+}

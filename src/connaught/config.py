@@ -34,4 +34,12 @@ def load_config(root, name="pilot"):
     for fold in config.get("validation", []):
         if not start < pd.Timestamp(fold["start"]) < pd.Timestamp(fold["end"]) <= cut:
             raise ValueError("Validation periods must lie inside the development period. / 验证时段必须位于开发期。")
+    if config.get("analysis") == "study":
+        folds = config.get("validation", [])
+        first_fold = min((pd.Timestamp(f["start"]) for f in folds), default=cut)
+        inventory_cutoff = pd.Timestamp(config["lane_inventory_cutoff"])
+        if not folds or not start < inventory_cutoff <= first_fold:
+            raise ValueError("Freeze the lane inventory before validation. / 验证前必须冻结车道清单。")
+        if not config["min_coverage"] < config["alternative_coverage"] <= 1:
+            raise ValueError("Set a higher alternative coverage threshold. / 替代覆盖率门槛须高于主门槛。")
     return config
