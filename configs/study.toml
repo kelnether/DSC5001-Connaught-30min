@@ -1,10 +1,12 @@
 name = "study"
 title = "干诺道西及西天桥 · 检测点级提前 30 分钟平均车速预测"
-status = "六周候选正式实验"
+status = "六周正式实验"
+analysis = "study"
 input = "data/raw/study/lane_observations.csv.gz"
 detectors = "data/reference/detectors.csv"
 manifest = "data/provenance/study_archive_manifest.json"
 extraction_audit = "data/provenance/study_extraction_audit.json"
+skip_invalid_snapshots = true
 output = "results/study"
 start = "2026-09-21"
 test_start = "2026-10-19"
@@ -16,6 +18,9 @@ horizon_minutes = 30
 # Lane count determines coverage. Small and inconsistent pilot gains kept lane-gap inputs out of the primary detector model.
 # 车道数用于覆盖率。原型中车道速度差的收益小且不稳定，主模型预测点位均速。
 min_coverage = 0.60
+alternative_coverage = 0.70
+# Freeze lane labels before the first validation fold. / 第一个验证折开始前冻结车道标签。
+lane_inventory_cutoff = "2026-10-05"
 seed = 42
 ridge_alphas = [1.0, 10.0, 100.0]
 forest_leaf_sizes = [15, 35]

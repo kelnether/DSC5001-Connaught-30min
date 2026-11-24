@@ -64,7 +64,9 @@ def save_forecast_figures(pred, scores, output, config):
 
     fig, ax = plt.subplots(figsize=(9, 4))
     names = scores["model"].map(MODEL_DISPLAY)
-    bars = ax.barh(names, scores["mae"], color=["#737c8b", "#737c8b", "#6495ad", "#11867e", "#4561a5"])
+    colors = {"persistence": "#737c8b", "historical": "#737c8b", "ridge_speed_only": "#6495ad",
+              "ridge_full": "#11867e", "random_forest": "#4561a5", "ols": "#a56743"}
+    bars = ax.barh(names, scores["mae"], color=scores["model"].map(colors).tolist())
     ax.bar_label(bars, fmt="%.2f", padding=5)
     ax.set(xlabel="Test MAE (km/h) · lower is better", title=f'{config["horizon_minutes"]}-minute detector-speed forecast · shared test rows',
            xlim=(0, max(scores["mae"]) * 1.17))

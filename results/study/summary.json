@@ -1,0 +1,144 @@
+{
+  "split": {
+    "selected_parameters": {
+      "ridge_full": 100.0,
+      "ridge_speed_only": 100.0,
+      "random_forest": 15,
+      "ols": null
+    },
+    "validation": [
+      {
+        "fold": 1,
+        "start": "2026-10-05",
+        "end": "2026-10-12",
+        "train_n": 7702,
+        "validation_n": 9147,
+        "last_training_target": "2026-10-04 23:40:00",
+        "first_validation_origin": "2026-10-05 07:05:00",
+        "last_validation_target": "2026-10-11 23:50:00"
+      },
+      {
+        "fold": 2,
+        "start": "2026-10-12",
+        "end": "2026-10-19",
+        "train_n": 16849,
+        "validation_n": 15959,
+        "last_training_target": "2026-10-11 23:50:00",
+        "first_validation_origin": "2026-10-12 00:00:00",
+        "last_validation_target": "2026-10-19 00:00:00"
+      }
+    ],
+    "train_n": 32848,
+    "test_n": 35239,
+    "complete_rows": 68142,
+    "boundary_excluded": 55,
+    "last_train_target": "2026-10-19 00:00:00",
+    "first_test_origin": "2026-10-19 00:00:00",
+    "last_test_target": "2026-11-01 23:45:00",
+    "test_days": 14,
+    "test_detectors": 12
+  },
+  "ablation": {
+    "full_mae_improvement_kmh": 0.0760870209632265,
+    "test_days": 14,
+    "paired_daily_bootstrap_95pct": [
+      0.05329513463041758,
+      0.10198851929370056
+    ]
+  },
+  "data": {
+    "input_rows": 2267922,
+    "missing_timestamps": 0,
+    "out_of_window_or_invalid_time": 174,
+    "duplicate_rows": 232,
+    "invalid_or_offline_rows": 311645,
+    "valid_lane_rows": 1955871,
+    "registered_detectors": 12,
+    "detectors_with_rows": 12,
+    "usable_detectors": 12,
+    "grid_rows": 145152,
+    "usable_bins": 104009,
+    "sha256": "86a4ded827916eafed65be27c7913019ef8b491d2ad94367b46279dcb642ae4c",
+    "lane_inventory": {
+      "cutoff_exclusive": "2026-10-05",
+      "known": {
+        "AID03101": [
+          "Fast Lane",
+          "Middle Lane",
+          "Slow Lane"
+        ],
+        "AID03102": [
+          "Fast Lane",
+          "Slow Lane"
+        ],
+        "AID03103": [
+          "Fast Lane",
+          "Slow Lane"
+        ],
+        "AID03104": [
+          "Fast Lane"
+        ],
+        "AID04102": [
+          "Fast Lane",
+          "Slow Lane"
+        ],
+        "AID04103": [
+          "Fast Lane",
+          "Slow Lane"
+        ],
+        "AID04104": [
+          "Fast Lane",
+          "Middle Lane 1",
+          "Middle Lane 2",
+          "Slow Lane"
+        ],
+        "AID04105": [
+          "Fast Lane",
+          "Middle Lane",
+          "Slow Lane"
+        ],
+        "AID04218": [
+          "Fast Lane",
+          "Middle Lane",
+          "Slow Lane"
+        ],
+        "AID04219": [
+          "Fast Lane",
+          "Middle Lane",
+          "Slow Lane"
+        ],
+        "AID04220": [
+          "Fast Lane",
+          "Slow Lane"
+        ],
+        "AID04221": [
+          "Fast Lane",
+          "Slow Lane"
+        ]
+      },
+      "later_only": [],
+      "later_only_rows": 0,
+      "later_only_valid_rows_excluded": 0
+    },
+    "sequential_lane_row_exclusions": {
+      "outside_window": 174,
+      "duplicates": 232,
+      "valid_flag": 311645,
+      "speed_range": 0,
+      "volume_nonnegative": 0,
+      "occupancy_range": 0,
+      "lane_label": 0,
+      "duration_30_seconds": 0,
+      "seconds_grid": 0,
+      "later_only_valid_lanes": 0
+    },
+    "min_coverage": 0.6,
+    "low_coverage_bins": 40832,
+    "no_vehicle_after_coverage_bins": 311
+  },
+  "historical_levels": {
+    "point_weekday_slot": 29012,
+    "point_daytype_hour": 4144,
+    "persistence_fallback": 2083
+  }
+}

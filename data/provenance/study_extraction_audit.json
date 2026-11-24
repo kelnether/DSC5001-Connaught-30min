@@ -1,0 +1,301 @@
+[
+  {
+    "day": "20260921",
+    "snapshots": 733,
+    "periods": 1466,
+    "selected_lane_rows": 42470,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260922",
+    "snapshots": 711,
+    "periods": 1422,
+    "selected_lane_rows": 41122,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260923",
+    "snapshots": 732,
+    "periods": 1464,
+    "selected_lane_rows": 42358,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260924",
+    "snapshots": 801,
+    "periods": 1602,
+    "selected_lane_rows": 46322,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260925",
+    "snapshots": 838,
+    "periods": 1676,
+    "selected_lane_rows": 48434,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260926",
+    "snapshots": 841,
+    "periods": 1682,
+    "selected_lane_rows": 48750,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260927",
+    "snapshots": 823,
+    "periods": 1646,
+    "selected_lane_rows": 47618,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260928",
+    "snapshots": 832,
+    "periods": 1664,
+    "selected_lane_rows": 48161,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260929",
+    "snapshots": 833,
+    "periods": 1666,
+    "selected_lane_rows": 48217,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20260930",
+    "snapshots": 786,
+    "periods": 1570,
+    "selected_lane_rows": 45420,
+    "invalid_snapshots": [
+      {
+        "member": "https%3A%2F%2Fresource.data.one.gov.hk%2Ftd%2Ftraffic-detectors%2F/20260930-0620-rawSpeedVol-all.xml",
+        "error": "unclosed token: line 1, column 131067"
+      }
+    ]
+  },
+  {
+    "day": "20261001",
+    "snapshots": 853,
+    "periods": 1706,
+    "selected_lane_rows": 49332,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261002",
+    "snapshots": 721,
+    "periods": 1442,
+    "selected_lane_rows": 41768,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261003",
+    "snapshots": 785,
+    "periods": 1570,
+    "selected_lane_rows": 45413,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261004",
+    "snapshots": 750,
+    "periods": 1500,
+    "selected_lane_rows": 43376,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261005",
+    "snapshots": 727,
+    "periods": 1454,
+    "selected_lane_rows": 42060,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261006",
+    "snapshots": 763,
+    "periods": 1526,
+    "selected_lane_rows": 44094,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261007",
+    "snapshots": 871,
+    "periods": 1742,
+    "selected_lane_rows": 50429,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261008",
+    "snapshots": 984,
+    "periods": 1968,
+    "selected_lane_rows": 57054,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261009",
+    "snapshots": 982,
+    "periods": 1964,
+    "selected_lane_rows": 56876,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261010",
+    "snapshots": 960,
+    "periods": 1920,
+    "selected_lane_rows": 55608,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261011",
+    "snapshots": 1129,
+    "periods": 2258,
+    "selected_lane_rows": 65366,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261012",
+    "snapshots": 1115,
+    "periods": 2230,
+    "selected_lane_rows": 64268,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261013",
+    "snapshots": 1092,
+    "periods": 2184,
+    "selected_lane_rows": 63224,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261014",
+    "snapshots": 1031,
+    "periods": 2062,
+    "selected_lane_rows": 59562,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261015",
+    "snapshots": 957,
+    "periods": 1914,
+    "selected_lane_rows": 54633,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261016",
+    "snapshots": 1035,
+    "periods": 2070,
+    "selected_lane_rows": 59036,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261017",
+    "snapshots": 1053,
+    "periods": 2106,
+    "selected_lane_rows": 61005,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261018",
+    "snapshots": 1061,
+    "periods": 2122,
+    "selected_lane_rows": 61414,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261019",
+    "snapshots": 1044,
+    "periods": 2088,
+    "selected_lane_rows": 60526,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261020",
+    "snapshots": 1029,
+    "periods": 2058,
+    "selected_lane_rows": 59242,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261021",
+    "snapshots": 1048,
+    "periods": 2096,
+    "selected_lane_rows": 60334,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261022",
+    "snapshots": 1036,
+    "periods": 2072,
+    "selected_lane_rows": 59736,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261023",
+    "snapshots": 1063,
+    "periods": 2126,
+    "selected_lane_rows": 60996,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261024",
+    "snapshots": 1043,
+    "periods": 2086,
+    "selected_lane_rows": 60488,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261025",
+    "snapshots": 1059,
+    "periods": 2118,
+    "selected_lane_rows": 61404,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261026",
+    "snapshots": 1047,
+    "periods": 2094,
+    "selected_lane_rows": 59838,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261027",
+    "snapshots": 1065,
+    "periods": 2130,
+    "selected_lane_rows": 60685,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261028",
+    "snapshots": 1035,
+    "periods": 2070,
+    "selected_lane_rows": 59536,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261029",
+    "snapshots": 983,
+    "periods": 1966,
+    "selected_lane_rows": 56185,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261030",
+    "snapshots": 990,
+    "periods": 1980,
+    "selected_lane_rows": 56680,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261031",
+    "snapshots": 1017,
+    "periods": 2034,
+    "selected_lane_rows": 58946,
+    "invalid_snapshots": []
+  },
+  {
+    "day": "20261101",
+    "snapshots": 1034,
+    "periods": 2068,
+    "selected_lane_rows": 59936,
+    "invalid_snapshots": []
+  }
+]

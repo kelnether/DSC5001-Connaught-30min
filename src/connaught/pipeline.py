@@ -23,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 
 def run(root, config, output_dir=None):
+    if config.get("analysis") == "study":
+        from .study import run_study
+        return run_study(root, config, output_dir)
     output = Path(output_dir).resolve() if output_dir else root / config["output"]
     output.mkdir(parents=True, exist_ok=True)
     panel, coverage, raw = build_panel(root, config)

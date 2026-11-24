@@ -33,14 +33,45 @@ def build_panel(root, config):
     if unknown:
         raise ValueError(f"Input has unmapped detectors: {sorted(unknown)}. / 输入含未登记的检测器。")
     dedup = window.drop_duplicates(["timestamp", "detector_id", "lane_id"], keep="last").copy()
-    lane_counts = dedup.groupby("detector_id")["lane_id"].nunique().reindex(meta["detector_id"])
+    cutoff = config.get("lane_inventory_cutoff")
+    inventory_source = dedup if cutoff is None else dedup.loc[dedup["timestamp"].lt(pd.Timestamp(cutoff))]
+    lane_counts = inventory_source.groupby("detector_id")["lane_id"].nunique().reindex(meta["detector_id"])
     for key in ("speed", "volume", "occupancy"):
         dedup[key] = pd.to_numeric(dedup[key], errors="coerce")
-    eligible = (dedup["valid"].eq("Y") & dedup["speed"].between(0, 200) &
-                dedup["volume"].ge(0) & dedup["occupancy"].between(0, 100) &
-                dedup["lane_id"].notna() &
-                dedup["period_end"].sub(dedup["timestamp"]).eq(pd.Timedelta(seconds=30)) &
-                dedup["timestamp"].dt.second.isin([0, 30]))
+    rules = {
+        "valid_flag": dedup["valid"].eq("Y"),
+        "speed_range": dedup["speed"].between(0, 200),
+        "volume_nonnegative": dedup["volume"].ge(0),
+        "occupancy_range": dedup["occupancy"].between(0, 100),
+        "lane_label": dedup["lane_id"].notna(),
+        "duration_30_seconds": dedup["period_end"].sub(dedup["timestamp"]).eq(pd.Timedelta(seconds=30)),
+        "seconds_grid": dedup["timestamp"].dt.second.isin([0, 30]),
+    }
+    eligible = pd.Series(True, index=dedup.index)
+    cleaning_steps = {"outside_window": len(raw) - len(window), "duplicates": len(window) - len(dedup)}
+    for name, passes in rules.items():
+        if cutoff is not None:
+            cleaning_steps[name] = int((eligible & ~passes).sum())
+        eligible &= passes
+    inventory_audit = None
+    if cutoff is not None:
+        keys = ["detector_id", "lane_id"]
+        inventory = inventory_source[keys].dropna().drop_duplicates()
+        observed = dedup[keys].dropna().drop_duplicates()
+        unseen = observed.merge(inventory, on=keys, how="left", indicator=True)
+        unseen = unseen.loc[unseen["_merge"].eq("left_only"), keys]
+        new_lane = (np.zeros(len(dedup), dtype=bool) if unseen.empty else
+                    pd.MultiIndex.from_frame(dedup[keys]).isin(pd.MultiIndex.from_frame(unseen)))
+        inventory_audit = {
+            "cutoff_exclusive": cutoff,
+            "known": {str(site): sorted(part["lane_id"].tolist())
+                      for site, part in inventory.groupby("detector_id")},
+            "later_only": unseen.to_dict("records"),
+            "later_only_rows": int(new_lane.sum()),
+            "later_only_valid_rows_excluded": int((eligible & new_lane).sum()),
+        }
+        eligible &= ~new_lane
+        cleaning_steps["later_only_valid_lanes"] = inventory_audit["later_only_valid_rows_excluded"]
     clean = dedup.loc[eligible].copy()
     clean["bin_end"] = clean["timestamp"].dt.floor("5min") + pd.Timedelta(minutes=5)
     # Weight each lane's 30-second speed by its vehicle count. / 以车辆数加权同一点位各车道的 30 秒车速。
@@ -72,14 +103,23 @@ def build_panel(root, config):
         "grid_rows": len(panel), "usable_bins": int(panel["speed"].notna().sum()),
         "sha256": sha256_file(input_path),
     }
-    coverage = panel.groupby(["detector_id", "road_group"], as_index=False).agg(
-        expected_bins=("bin_end", "size"), usable_bins=("speed", "count"), mean_lane_coverage=("coverage", "mean"))
-    coverage["usable_share"] = coverage["usable_bins"] / coverage["expected_bins"]
+    if inventory_audit is not None:
+        raw_summary["lane_inventory"] = inventory_audit
+        raw_summary["sequential_lane_row_exclusions"] = cleaning_steps
+    coverage = detector_coverage(panel)
     logger.info("Cleaned lane records: %s input, %s valid, %s/%s detectors and %s/%s five-minute bins usable."
                 " / 清洗完成，统计输入、有效记录、可用检测点及时间窗。",
                 f"{len(raw):,}", f"{len(clean):,}", raw_summary["usable_detectors"], len(meta),
                 f"{raw_summary['usable_bins']:,}", f"{len(panel):,}")
     return panel, coverage, raw_summary
+
+
+def detector_coverage(panel):
+    """Summarize usable speed bins by detector. / 汇总各点位的可用车速窗。"""
+    coverage = panel.groupby(["detector_id", "road_group"], as_index=False).agg(
+        expected_bins=("bin_end", "size"), usable_bins=("speed", "count"), mean_lane_coverage=("coverage", "mean"))
+    coverage["usable_share"] = coverage["usable_bins"] / coverage["expected_bins"]
+    return coverage
 
 
 def daily_coverage(panel):

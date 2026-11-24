@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 MODEL_NAMES = ["persistence", "historical", "ridge_speed_only", "ridge_full", "random_forest"]
 MODEL_DISPLAY = {
     "persistence": "Persistence", "historical": "Historical", "ridge_speed_only": "Ridge (speed only)",
-    "ridge_full": "Ridge (full)", "random_forest": "Random Forest",
+    "ridge_full": "Ridge (full)", "random_forest": "Random Forest", "ols": "OLS (full)",
 }
 
 
@@ -20,12 +20,12 @@ def evaluate(true, prediction):
             "rmse": float(np.sqrt(np.mean(delta ** 2))), "bias": float(np.mean(delta))}
 
 
-def score_table(pred, by=None):
+def score_table(pred, by=None, *, model_names=MODEL_NAMES):
     rows = []
     groups = pred.groupby(by, sort=True) if by else [("Overall", pred)]
     for key, part in groups:
         base = evaluate(part["target_speed"], part["persistence"])["mae"]
-        for model in MODEL_NAMES:
+        for model in model_names:
             score = evaluate(part["target_speed"], part[model])
             rows.append({"group": str(key), "model": model, **score,
                          "mae_gain_vs_persistence_pct": 100 * (base - score["mae"]) / base if base else np.nan})

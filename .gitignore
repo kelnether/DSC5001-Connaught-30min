@@ -15,3 +15,8 @@ report.html
 build/
 dist/
 results/pilot/eda/
+
+.DS_Store
+report.pdf
+results/pilot-recheck/
+results/study-coverage-review/

@@ -1,0 +1,18 @@
+{
+  "main_summary": "summary.json",
+  "alternative_summary": "coverage_alternative/summary.json",
+  "shared_coverage_test_rows": 4294,
+  "thresholds": [
+    0.6,
+    0.7
+  ],
+  "figures": {
+    "01_detector_coverage": "eda/development/figures/01_detector_coverage.png",
+    "02_hourly_profiles": "eda/development/figures/02_hourly_profiles.png",
+    "03_model_comparison": "figures/03_model_comparison.png",
+    "04_forecast_example": "figures/04_forecast_example.png",
+    "06_rf_partial_dependence": "figures/06_rf_partial_dependence.png",
+    "05_rf_importance": "figures/05_rf_importance.png",
+    "07_ridge_coefficients": "figures/07_ridge_coefficients.png"
+  }
+}

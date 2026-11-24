@@ -1,0 +1,90 @@
+{
+  "input_rows": 2267922,
+  "missing_timestamps": 0,
+  "out_of_window_or_invalid_time": 174,
+  "duplicate_rows": 232,
+  "invalid_or_offline_rows": 311645,
+  "valid_lane_rows": 1955871,
+  "registered_detectors": 12,
+  "detectors_with_rows": 12,
+  "usable_detectors": 12,
+  "grid_rows": 145152,
+  "usable_bins": 52331,
+  "sha256": "86a4ded827916eafed65be27c7913019ef8b491d2ad94367b46279dcb642ae4c",
+  "lane_inventory": {
+    "cutoff_exclusive": "2026-10-05",
+    "known": {
+      "AID03101": [
+        "Fast Lane",
+        "Middle Lane",
+        "Slow Lane"
+      ],
+      "AID03102": [
+        "Fast Lane",
+        "Slow Lane"
+      ],
+      "AID03103": [
+        "Fast Lane",
+        "Slow Lane"
+      ],
+      "AID03104": [
+        "Fast Lane"
+      ],
+      "AID04102": [
+        "Fast Lane",
+        "Slow Lane"
+      ],
+      "AID04103": [
+        "Fast Lane",
+        "Slow Lane"
+      ],
+      "AID04104": [
+        "Fast Lane",
+        "Middle Lane 1",
+        "Middle Lane 2",
+        "Slow Lane"
+      ],
+      "AID04105": [
+        "Fast Lane",
+        "Middle Lane",
+        "Slow Lane"
+      ],
+      "AID04218": [
+        "Fast Lane",
+        "Middle Lane",
+        "Slow Lane"
+      ],
+      "AID04219": [
+        "Fast Lane",
+        "Middle Lane",
+        "Slow Lane"
+      ],
+      "AID04220": [
+        "Fast Lane",
+        "Slow Lane"
+      ],
+      "AID04221": [
+        "Fast Lane",
+        "Slow Lane"
+      ]
+    },
+    "later_only": [],
+    "later_only_rows": 0,
+    "later_only_valid_rows_excluded": 0
+  },
+  "sequential_lane_row_exclusions": {
+    "outside_window": 174,
+    "duplicates": 232,
+    "valid_flag": 311645,
+    "speed_range": 0,
+    "volume_nonnegative": 0,
+    "occupancy_range": 0,
+    "lane_label": 0,
+    "duration_30_seconds": 0,
+    "seconds_grid": 0,
+    "later_only_valid_lanes": 0
+  },
+  "min_coverage": 0.7,
+  "low_coverage_bins": 92744,
+  "no_vehicle_after_coverage_bins": 77
+}

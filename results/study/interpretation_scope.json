@@ -1,0 +1,11 @@
+{
+  "sample": "main held-out test only",
+  "sample_n": 8000,
+  "seed": 42,
+  "permutation_repeats": 5,
+  "partial_dependence_quantiles": [
+    0.05,
+    0.95
+  ],
+  "partial_dependence_max_grid_points": 17
+}
